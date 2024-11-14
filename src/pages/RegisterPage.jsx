@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
 // Register function 
-const Register = () => {
+const RegisterPage = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -16,7 +16,7 @@ const Register = () => {
 
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault();
 
         try {
@@ -25,10 +25,13 @@ const Register = () => {
                 email,
                 password,
             });
-            console.log(data);
-            toast.success("User registered successfully");
-            navigate("/login");
-            
+            if (data.status === 200) {
+                const newUser = await data.json();
+                console.log(newUser);
+                toast.success("User registered successfully");
+                navigate("/login");
+            }
+                
         } catch (error) {
             console.log(error);
             toast.error("User registration failed");
@@ -69,4 +72,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default RegisterPage;
