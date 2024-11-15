@@ -1,10 +1,18 @@
+import { useSession } from "../context/SessionContext";
 import { Link } from "react-router-dom";
 
 function NavBar() {
+  const { isAuthenticated, logout } = useSession();
+
   return (
-    <div>
-      <Link to="/home">Home</Link>
-    </div>
+    <nav>
+      {isAuthenticated ? (
+        <>
+          <Link to="/home">Home</Link>
+          <button onClick={logout}>Logout</button>
+        </>
+      ) : null}
+    </nav>
   );
 }
 
