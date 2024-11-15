@@ -1,95 +1,71 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+import Props from "prop-types";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const SessionContext = createContext();
 
-export const SessionContext = createContext();
+export const useSession = () => useContext(SessionContext);
 
-const SessionContextProvider = ({ children }) => {
-    const [token, setToken] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
+export const SessionProvider = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-    // verify token from backend and set it to state if it is valid
-    const verifyToken = async (currentToken) => {
-        try {
-        const data = await axios.get(`${BACKEND_URL}/auth/verify`, {
-            headers: {
-                Authorization: `Bearer ${currentToken}`,
-            },
+  useEffect(() => {
+    // Check session on mount
+    const checkSession = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/auth/check-session`, {
+          withCredentials: true, // Allows sending cookies
         });
-        if (data.status === 200) {
-            const parsedData = await data.json();
-            console.log(parsedData);
-            setToken(currentToken);
-            setIsLoading(false);
-        } else {
-            window.localStorage.removeItem("token");
-            setIsLoading(false);
-        }    
-        } catch (error) {
-            console.log(error);
-            window.localStorage.removeItem("token");
-            setIsLoading(false);
-        }
+        setIsAuthenticated(response.data.isAuthenticated);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error checking session:", error);
+        setLoading(false);
+      }
     };
+    checkSession();
+  }, []);
 
-    // check if there is a token in localStorage when the component mounts
-    useEffect(() => {
-        const currentToken = window.localStorage.getItem("token");
-        if (currentToken) {
-            verifyToken();
-        } else {
-            setIsLoading(false);
-        }
-    }, []);
-    
-    // save token to localStorage when it changes
-    useEffect(() => {
-        if (token) {
-            window.localStorage.setItem("token", token);
-        } else {
-            window.localStorage.removeItem("token");
-        }
-    }, [token]);
-
-    // log out and remove token from localStorage
-    const logout = () => {
-        setToken("");
-        window.localStorage.removeItem("token");
+  const login = async (email, password) => {
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/auth/login`,
+        { email, password },
+        { withCredentials: true } // Allows backend to set cookie
+      );
+      if (response.status === 200) {
+        setIsAuthenticated(true);
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
     }
+  };
 
-    // make request with token in headers
-    const makeRequest = async (endpoint, method = "GET", data) => {
-        try {
-            const response = await axios(
-                `${BACKEND_URL}/api/${endpoint}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data),
-                    method,
-                }
-            );
-            return response.data;
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
+  const logout = async () => {
+    try {
+      await axios.post(`${BACKEND_URL}/auth/logout`, {}, { withCredentials: true });
+      setIsAuthenticated(false);
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
     }
+  };
 
-    // provide token, setToken, isLoading and logout to children components
-    return (
-        <SessionContext.Provider value={{ token, setToken, isLoading, logout, makeRequest }}>
-            {children}
-        </SessionContext.Provider>
-    );
+  return (
+    <SessionContext.Provider value={{ isAuthenticated, loading, login, logout }}>
+      {!loading && children}
+    </SessionContext.Provider>
+  );
 };
 
-export default SessionContextProvider;
+export default SessionProvider;
 
-SessionContextProvider.propTypes = {
-    children: PropTypes.node.isRequired,
+// PropTypes for SessionProvider component 
+SessionProvider.propTypes = {
+  children: Props.node.isRequired,
 };
