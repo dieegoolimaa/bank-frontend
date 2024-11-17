@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Props from "prop-types";
+import PropTypes from "prop-types";
+import AxiosApi from "../components/AxiosApi";
 
 const SessionContext = createContext();
 
@@ -11,44 +11,35 @@ export const SessionProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-  useEffect(() => {
-    // Check session on mount
-    const checkSession = async () => {
-      try {
-        const response = await axios.get(`${BACKEND_URL}/auth/check-session`, {
-          withCredentials: true, // Allows sending cookies
-        });
-        setIsAuthenticated(response.data.isAuthenticated);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error checking session:", error);
-        setLoading(false);
-      }
-    };
-    checkSession();
-  }, []);
-
-  const login = async (email, password) => {
+  // Check session on mount
+  const checkSession = async () => {
     try {
-      const response = await axios.post(
-        `${BACKEND_URL}/auth/login`,
-        { email, password },
-        { withCredentials: true } // Allows backend to set cookie
-      );
+      const response = await AxiosApi.get("/auth/check-session", {
+        withCredentials: true,
+      });
+
       if (response.status === 200) {
         setIsAuthenticated(true);
-        navigate("/home");
+      } else {
+        setIsAuthenticated(false);
       }
+
+      setLoading(false);
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Session check failed:", error);
+      setIsAuthenticated(false);
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    checkSession();
+  }, []);
+
   const logout = async () => {
     try {
-      await axios.post(`${BACKEND_URL}/auth/logout`, {}, { withCredentials: true });
+      await AxiosApi.post(`/auth/logout`, {}, { withCredentials: true });
       setIsAuthenticated(false);
       navigate("/login");
     } catch (error) {
@@ -56,8 +47,14 @@ export const SessionProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    console.log("isAuthenticated changed:", isAuthenticated);
+  }, [isAuthenticated]);
+
   return (
-    <SessionContext.Provider value={{ isAuthenticated, loading, login, logout }}>
+    <SessionContext.Provider
+      value={{ isAuthenticated, loading, logout, checkSession }}
+    >
       {!loading && children}
     </SessionContext.Provider>
   );
@@ -65,7 +62,7 @@ export const SessionProvider = ({ children }) => {
 
 export default SessionProvider;
 
-// PropTypes for SessionProvider component 
+// PropTypes for SessionProvider component
 SessionProvider.propTypes = {
-  children: Props.node.isRequired,
+  children: PropTypes.node.isRequired,
 };
