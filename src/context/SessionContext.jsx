@@ -21,6 +21,8 @@ export const SessionProvider = ({ children }) => {
 
       if (response.status === 200) {
         setIsAuthenticated(true);
+        navigate("/home");
+        console.log("Session check successful");
       } else {
         setIsAuthenticated(false);
       }
