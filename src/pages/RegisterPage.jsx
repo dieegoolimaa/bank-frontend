@@ -22,7 +22,7 @@ const RegisterPage = () => {
       console.log(response.data);
       console.log(username, email);
       toast.success("Registration successful");
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error(error);
       toast.error("Registration failed");

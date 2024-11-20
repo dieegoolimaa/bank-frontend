@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AxiosApi from "../components/AxiosApi";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -55,6 +56,10 @@ const LoginPage = () => {
         </div>
         <button type="submit">Login</button>
       </form>
+      <p>
+        Create an account and be part of our bank:{" "}
+        <Link to="/register">Register</Link>
+      </p>
     </div>
   );
 };

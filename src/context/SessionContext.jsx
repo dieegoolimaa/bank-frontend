@@ -19,7 +19,7 @@ export const SessionProvider = ({ children }) => {
     if (storedToken) {
       setToken(storedToken);
     } else {
-      navigate("/login");
+      navigate("/");
       setToken(null);
     }
   }, []);
