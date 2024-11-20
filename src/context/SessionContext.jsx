@@ -1,70 +1,44 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import AxiosApi from "../components/AxiosApi";
+import { createContext } from "react";
+import { useNavigate } from "react-router-dom";
 
-const SessionContext = createContext();
-
-export const useSession = () => useContext(SessionContext);
+export const SessionContext = createContext();
 
 export const SessionProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  SessionProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+  };
+
+  const [token, setToken] = useState(null);
   const navigate = useNavigate();
 
-  // Check session on mount
-  const checkSession = async () => {
-    try {
-      const response = await AxiosApi.get("/auth/check-session", {
-        withCredentials: true,
-      });
-
-      if (response.status === 200) {
-        setIsAuthenticated(true);
-        navigate("/home");
-        console.log("Session check successful");
-      } else {
-        setIsAuthenticated(false);
-      }
-
-      setLoading(false);
-    } catch (error) {
-      console.error("Session check failed:", error);
-      setIsAuthenticated(false);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    checkSession();
+    const storedToken = localStorage.getItem("accessToken");
+
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
+      navigate("/login");
+      setToken(null);
+    }
   }, []);
 
-  const logout = async () => {
-    try {
-      await AxiosApi.post(`/auth/logout`, {}, { withCredentials: true });
-      setIsAuthenticated(false);
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+  const login = (newToken) => {
+    setToken(newToken);
+    localStorage.setItem("accessToken", newToken);
   };
 
-  useEffect(() => {
-    console.log("isAuthenticated changed:", isAuthenticated);
-  }, [isAuthenticated]);
+  const logout = () => {
+    setToken(null);
+    localStorage.removeItem("accessToken");
+  };
+
+  const isAuthenticated = () => !!token;
 
   return (
-    <SessionContext.Provider
-      value={{ isAuthenticated, loading, logout, checkSession }}
-    >
-      {!loading && children}
+    <SessionContext.Provider value={{ token, login, logout, isAuthenticated }}>
+      {children}
     </SessionContext.Provider>
   );
-};
-
-export default SessionProvider;
-
-// PropTypes for SessionProvider component
-SessionProvider.propTypes = {
-  children: PropTypes.node.isRequired,
 };

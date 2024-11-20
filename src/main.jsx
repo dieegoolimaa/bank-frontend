@@ -1,8 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { SessionProvider } from "./context/SessionContext.jsx";
 import { BrowserRouter as Router } from "react-router-dom";
-
+import { SessionProvider } from "./context/SessionContext.jsx";
 import "./index.css";
 import App from "./App.jsx";
 

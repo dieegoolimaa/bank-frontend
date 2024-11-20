@@ -1,6 +1,8 @@
+// Register Page - JWT and Cookies
+
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AxiosApi from "../components/AxiosApi";
-import { useState } from "react";
 import { toast } from "react-toastify";
 
 const RegisterPage = () => {
@@ -9,54 +11,55 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await AxiosApi.post(
-        "/auth/register",
-        { username, email, password },
-        { withCredentials: true }
-      );
-
-      if (response.status === 200) {
-        console.log("Registration successful");
-        toast.success("Registration successful");
-        navigate("/login");
-      }
+      const response = await AxiosApi.post("/auth/register", {
+        username,
+        email,
+        password,
+      });
+      console.log(response.data);
+      console.log(username, email);
+      toast.success("Registration successful");
+      navigate("/login");
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Registration failed";
-      console.error("Registration error:", errorMessage);
-      toast.error(errorMessage);
+      console.error(error);
+      toast.error("Registration failed");
     }
   };
 
   return (
     <div>
       <h1>Register</h1>
-      <form onSubmit={handleRegister}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="username">Username:</label>
+          <input
+            type="text"
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
         <button type="submit">Register</button>
       </form>
     </div>

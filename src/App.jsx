@@ -1,21 +1,17 @@
 import { Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
-import NavBar from "./components/NavBar";
-import "./App.css";
+import LoginPage from "./pages/LoginPage";
 
-// Set Navbar to be for each page but not for login and register pages
-// Show Home button in is valid session
+import "./App.css";
 
 function App() {
   return (
     <>
-      <NavBar />
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/home" element={<HomePage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/home" element={<HomePage />} />
       </Routes>
     </>
   );
