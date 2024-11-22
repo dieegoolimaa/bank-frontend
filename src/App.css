@@ -1,119 +1,42 @@
-/* GLOBAL */
-* {
+/* Reset básico */
+body, h1, h2, h3, p, ul, li, a, input, button {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Roboto", Arial, sans-serif; /* Tipografia moderna */
 }
 
 body {
-  background-color: rgba(250, 248, 248, 0.897); /* Fundo de tela transparente */
-  color: #0c0c0c; /* Cor padrão para texto */
-  font-size: 16px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
 }
 
-/* BOTÕES */
+/* Títulos */
+h1, h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #1a73e8;
+  margin-bottom: 20px;
+}
+
+/* Botões modernos */
 button {
-  background-color: #052442; /* Azul escuro */
-  color: #fff; /* Texto branco */
-  border: none;
-  border-radius: 8px; /* Bordas arredondadas */
-  padding: 12px 20px;
+  background: linear-gradient(135deg, #1a73e8, #4a90e2);
+  color: #fff;
   font-size: 1rem;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Efeito ao passar o cursor */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 button:hover {
-  background-color: #0055cc; /* Azul mais claro no hover */
-  transform: scale(1.05); /* Leve zoom */
-}
-
-button:active {
-  background-color: #001a33; /* Azul mais escuro no clique */
-  transform: scale(0.95); /* Reduz ao clicar */
-}
-
-button:disabled {
-  background-color: #ccc; /* Desabilitado */
-  color: #666;
-  cursor: not-allowed;
-}
-
-/* FORMULÁRIOS */
-input,
-select,
-textarea {
-  width: 100%;
-  padding: 10px 15px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: #003366;
-  outline: none;
-  background-color: #fff;
-  box-shadow: 0 0 5px rgba(0, 51, 102, 0.5);
-}
-
-/* LINKS */
-a {
-  background-color: #052442; /* Azul escuro */
-  color: #fff; /* Texto branco */
-  border: none;
-  border-radius: 8px; /* Bordas arredondadas */
-  padding: 12px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Efeito ao passar o cursor */
-}
-
-a:hover {
-  background-color: #0055cc; /* Azul mais claro no hover */
-  transform: scale(1.05); /* Leve zoom */
-}
-
-/* CONTAINERS E LAYOUT */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.card {
-  background-color: #fff;
-  border: 1px solid #e6e6e6;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-}
-
-/* RESPONSIVIDADE */
-@media (max-width: 768px) {
-  body {
-    font-size: 14px;
-  }
-
-  button {
-    padding: 10px 15px;
-  }
-
-  .card {
-    padding: 15px;
-  }
-}
+  background: linear-gradient(135deg, #
